@@ -24,7 +24,7 @@
         </p>
         <div class="hero-actions">
             <a href="{{ url_for('register') }}" class="hero-btn">Create free account</a>
-            <a href="#how-it-works" class="hero-btn">See how it works</a>
+            <a href="#how-it-works" class="hero-btn" id="how-it-works-btn">See how it works</a>
         </div>
     </div>
 
@@ -98,4 +98,56 @@
     </div>
 </section>
 
+<div class="video-modal" id="video-modal" hidden>
+    <div class="video-modal-dialog" role="dialog" aria-modal="true" aria-label="How Spendly works">
+        <button type="button" class="video-modal-close" id="video-modal-close" aria-label="Close video">&times;</button>
+        <div class="video-modal-frame">
+            <!-- Placeholder video: replace the ID in data-src with your own -->
+            <iframe id="video-modal-iframe"
+                    data-src="https://www.youtube.com/embed/jNQXAC9IVRw?autoplay=1&rel=0"
+                    title="How Spendly works"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen></iframe>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function () {
+    var openBtn = document.getElementById('how-it-works-btn');
+    var modal = document.getElementById('video-modal');
+    var closeBtn = document.getElementById('video-modal-close');
+    var iframe = document.getElementById('video-modal-iframe');
+
+    function openModal(e) {
+        e.preventDefault();
+        iframe.src = iframe.dataset.src;   // load (and autoplay) only when opened
+        modal.hidden = false;
+        document.body.style.overflow = 'hidden';
+        closeBtn.focus();
+    }
+
+    function closeModal() {
+        modal.hidden = true;
+        iframe.src = '';                   // unloading the iframe stops playback
+        document.body.style.overflow = '';
+        openBtn.focus();
+    }
+
+    openBtn.addEventListener('click', openModal);
+    closeBtn.addEventListener('click', closeModal);
+
+    // Clicking the overlay (outside the dialog) closes the modal
+    modal.addEventListener('click', function (e) {
+        if (e.target === modal) closeModal();
+    });
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && !modal.hidden) closeModal();
+    });
+})();
+</script>
 {% endblock %}
