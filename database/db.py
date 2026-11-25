@@ -66,6 +66,24 @@ def init_db():
         conn.close()
 
 
+def create_user(name, email, password):
+    """Insert a user with a hashed password and return the new id.
+
+    Expects validated input. Raises sqlite3.IntegrityError if the email is
+    already registered or a table constraint is violated.
+    """
+    conn = get_db()
+    try:
+        cursor = conn.execute(
+            "INSERT INTO users (name, email, password_hash) VALUES (?, ?, ?)",
+            (name, email, generate_password_hash(password)),
+        )
+        conn.commit()
+        return cursor.lastrowid
+    finally:
+        conn.close()
+
+
 def _current_month_dates(count):
     """Return `count` ISO dates spread evenly from the 1st of this month to today."""
     today = date.today()
