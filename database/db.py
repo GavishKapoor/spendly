@@ -84,6 +84,17 @@ def create_user(name, email, password):
         conn.close()
 
 
+def get_user_by_email(email):
+    """Return the users row for `email`, or None if no user has it."""
+    conn = get_db()
+    try:
+        return conn.execute(
+            "SELECT * FROM users WHERE email = ?", (email,)
+        ).fetchone()
+    finally:
+        conn.close()
+
+
 def _current_month_dates(count):
     """Return `count` ISO dates spread evenly from the 1st of this month to today."""
     today = date.today()

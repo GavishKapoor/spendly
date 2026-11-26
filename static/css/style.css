@@ -73,6 +73,7 @@ a { color: inherit; text-decoration: none; }
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 1rem;
 }
 
 .nav-brand {
@@ -94,6 +95,7 @@ a { color: inherit; text-decoration: none; }
 
 .nav-links {
     display: flex;
+    min-width: 0;
     align-items: center;
     gap: 1.5rem;
     font-size: 0.9rem;
@@ -109,9 +111,19 @@ a { color: inherit; text-decoration: none; }
     padding: 0.45rem 1.1rem;
     border-radius: var(--radius-sm);
     transition: background 0.2s !important;
+    white-space: nowrap;
 }
 
 .nav-cta:hover { background: var(--accent) !important; }
+
+.nav-user {
+    color: var(--ink-soft);
+    min-width: 0;
+    max-width: 12rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
 
 /* ------------------------------------------------------------------ */
 /* Main                                                                */
