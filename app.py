@@ -24,6 +24,55 @@ with app.app_context():
 
 
 # ------------------------------------------------------------------ #
+# Sample profile data — Step 5 replaces it with database/db.py calls  #
+# ------------------------------------------------------------------ #
+
+SAMPLE_USER = {
+    "name": "Demo User",
+    "email": "demo@spendly.com",
+    "initials": "DU",
+    "member_since": "November 2026",
+}
+
+SAMPLE_STATS = {
+    "total_spent": 6348.00,
+    "transaction_count": 8,
+    "top_category": "Shopping",
+}
+
+# Newest first.
+SAMPLE_TRANSACTIONS = [
+    {"date": "2026-11-27", "description": "Stationery",
+     "category": "Other", "amount": 150.00},
+    {"date": "2026-11-23", "description": "Dinner with friends",
+     "category": "Food", "amount": 280.00},
+    {"date": "2026-11-19", "description": "New shoes",
+     "category": "Shopping", "amount": 2300.00},
+    {"date": "2026-11-15", "description": "Movie tickets",
+     "category": "Entertainment", "amount": 499.00},
+    {"date": "2026-11-12", "description": "Pharmacy",
+     "category": "Health", "amount": 650.00},
+    {"date": "2026-11-08", "description": "Electricity bill",
+     "category": "Bills", "amount": 1899.00},
+    {"date": "2026-11-04", "description": "Metro card recharge",
+     "category": "Transport", "amount": 120.00},
+    {"date": "2026-11-01", "description": "Groceries",
+     "category": "Food", "amount": 450.00},
+]
+
+# Largest first. `percent` is the whole-number share of total_spent.
+SAMPLE_CATEGORIES = [
+    {"name": "Shopping", "total": 2300.00, "percent": 36},
+    {"name": "Bills", "total": 1899.00, "percent": 30},
+    {"name": "Food", "total": 730.00, "percent": 11},
+    {"name": "Health", "total": 650.00, "percent": 10},
+    {"name": "Entertainment", "total": 499.00, "percent": 8},
+    {"name": "Other", "total": 150.00, "percent": 2},
+    {"name": "Transport", "total": 120.00, "percent": 2},
+]
+
+
+# ------------------------------------------------------------------ #
 # Routes                                                              #
 # ------------------------------------------------------------------ #
 
@@ -34,8 +83,8 @@ def landing():
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
-    if "user_id" in session:
-        return redirect(url_for("landing"))
+    if session.get("user_id"):
+        return redirect(url_for("profile"))
     if request.method in ("GET", "HEAD"):
         return render_template("register.html")
     if request.method != "POST":
@@ -67,8 +116,8 @@ def register():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    if "user_id" in session:
-        return redirect(url_for("landing"))
+    if session.get("user_id"):
+        return redirect(url_for("profile"))
     if request.method in ("GET", "HEAD"):
         return render_template("login.html")
     if request.method != "POST":
@@ -85,7 +134,7 @@ def login():
             session.clear()
             session["user_id"] = user["id"]
             session["user_name"] = user["name"]
-            return redirect(url_for("landing"))
+            return redirect(url_for("profile"))
         error = "Invalid email or password"
 
     flash(error, "error")
@@ -96,6 +145,19 @@ def login():
 def logout():
     session.clear()
     return redirect(url_for("landing"))
+
+
+@app.route("/profile")
+def profile():
+    if not session.get("user_id"):
+        return redirect(url_for("login"))
+    return render_template(
+        "profile.html",
+        user=SAMPLE_USER,
+        stats=SAMPLE_STATS,
+        transactions=SAMPLE_TRANSACTIONS,
+        categories=SAMPLE_CATEGORIES,
+    )
 
 
 @app.route("/terms")
@@ -111,11 +173,6 @@ def privacy():
 # ------------------------------------------------------------------ #
 # Placeholder routes — students will implement these                  #
 # ------------------------------------------------------------------ #
-
-@app.route("/profile")
-def profile():
-    return "Profile page — coming in Step 4"
-
 
 @app.route("/expenses/add")
 def add_expense():
